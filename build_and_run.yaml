@@ -80,5 +80,5 @@
         network_mode: host
         ports:
           - "5000:5000"
-        volumes:
-          - /opt/filewatch/uploads:/opt/filewatch/uploads
+        #volumes:
+        #  - //filewatch/uploads:/opt/filewatch/certs

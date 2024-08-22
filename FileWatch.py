@@ -7,7 +7,6 @@ import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# TODO: Implement SSL
 # TODO: Secure copy
 # TODO: Stats
 
@@ -56,7 +55,7 @@ class FileCompressorHandler(FileSystemEventHandler):
         os.remove(file_path)
         logging.info(f"Original file deleted: {file_name}")
 
-# Start the directory watcher
+# watcher
 observer = Observer()
 event_handler = FileCompressorHandler()
 observer.schedule(event_handler, path=UPLOAD_FOLDER, recursive=False)
@@ -82,7 +81,7 @@ def upload_file():
             mail.send(msg)
             print (msg.body)
 
-            return 'File {file.filename} uploaded and notification email sent'
+            return 'File uploaded and notification email sent'
     return '''
     <!doctype html>
     <title>Upload File</title>
@@ -95,7 +94,5 @@ def upload_file():
 
 if __name__ == "__main__":
     try:
-        app.run(host="0.0.0.0", port=5000)
-    except KeyboardInterrupt:
-        observer.stop()
+        app.run(ssl_context=('/usr/src/app/certs/server.crt', '/usr/src/app/certs/server.key'),host="0.0.0.0", port=5000)
     observer.join()
