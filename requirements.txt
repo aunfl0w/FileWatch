@@ -1,6 +1,3 @@
 Flask==2.3.2
 Flask-Mail==0.9.1
-<<<<<<< HEAD
 watchdog==2.1.9
-=======
->>>>>>> 7109bd4 (adding in req and dockerfile, and fixing typo)

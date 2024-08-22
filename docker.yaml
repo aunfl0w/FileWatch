@@ -1,0 +1,63 @@
+---
+- hosts: local
+  become: yes
+
+  tasks:
+    - name: Ensure apt is updated
+      apt:
+        update_cache: yes
+
+    - name: Install prerequisites
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        state: present
+
+    - name: Ensure apt cache is updated after adding Docker repo
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Start and enable Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Clone app
+      git:
+        repo: 'https://github.com/davidkiser/FileWatch.git'
+        dest: /opt/filewatch
+
+    - name: Build Docker image for Flask app
+      docker_image:
+        path: /opt/filewatch
+        name: filewatch
+        tag: latest
+
+    - name: Run Flask app container
+      docker_container:
+        name: filewatch
+        image: filewatch:latest
+        state: started
+        ports:
+          - "5000:5000"
+        volumes:
+          - /opt/filewatch/uploads:/opt/filewatch/uploads

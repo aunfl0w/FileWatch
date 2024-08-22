@@ -7,16 +7,20 @@ import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
+# TODO:  Implement SSL
+
 app = Flask(__name__)
 
-mail_active = 'n'
+mail_active = 'y'
 # Configurations for Flask-Mail
-# This is not implemented currently
-app.config['MAIL_SERVER'] = 'smtp.example.com'  # Replace with your mail server
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'your-email@example.com'  # Replace with your email
-app.config['MAIL_PASSWORD'] = 'your-email-password'     # Replace with your email password
+# Testing locally via mailcatcher
+app.config['MAIL_SERVER'] = '127.0.0.1'  # Replace with your mail server
+app.config['MAIL_PORT'] = 1025
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = None  # Replace with your email
+app.config['MAIL_PASSWORD'] = None     # Replace with your email password
+app.config['MAIL_DEFAULT_SENDER'] = 'no-reply@example.com'
 
 mail = Mail(app)
 
@@ -73,7 +77,7 @@ def upload_file():
                           sender="your-email@example.com",
                           recipients=["recipient-email@example.com"])
             msg.body = f"A new file named {file.filename} has been uploaded."
-            #mail.send(msg)
+            mail.send(msg)
             print (msg.body)
 
             return 'File uploaded and email sent!'
