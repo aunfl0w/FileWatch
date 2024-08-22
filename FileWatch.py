@@ -7,7 +7,9 @@ import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# TODO:  Implement SSL
+# TODO: Implement SSL
+# TODO: Secure copy
+# TODO: Stats
 
 app = Flask(__name__)
 
@@ -80,7 +82,7 @@ def upload_file():
             mail.send(msg)
             print (msg.body)
 
-            return 'File uploaded and email sent!'
+            return 'File {file.filename} uploaded and notification email sent'
     return '''
     <!doctype html>
     <title>Upload File</title>

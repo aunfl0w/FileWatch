@@ -66,7 +66,9 @@
       git:
         repo: 'https://github.com/davidkiser/FileWatch.git'
         dest: /opt/filewatch
-
+    
+    # I know theres a docker_image resource to do this,but i fought with a weird issue getting it to find the dockerfile
+    # so i cheaped out in the interest of time
     - name: Build image
       command: docker build -t filewatch:latest /opt/filewatch
 
