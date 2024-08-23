@@ -64,7 +64,7 @@ class FileHandler(FileSystemEventHandler):
         os.remove(file_path)
         logging.info(f"Original file deleted: {file_name}")
 
-    def secure_copy_file(self, file)
+    #def secure_copy_file(self, file)
         #secure copy step.
 
 # watcher
