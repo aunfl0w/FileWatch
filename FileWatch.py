@@ -4,6 +4,7 @@ import os
 import logging
 import zipfile
 import time
+import re
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -22,12 +23,9 @@ app.config['MAIL_SERVER'] = '127.0.0.1'  # Replace with your mail server
 app.config['MAIL_PORT'] = 1025
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = None  # Replace with your email
-app.config['MAIL_PASSWORD'] = None     # Replace with your email password
+app.config['MAIL_USERNAME'] = None
+app.config['MAIL_PASSWORD'] = None
 app.config['MAIL_DEFAULT_SENDER'] = 'glennkiser@awesomeware.com'
-
-#This is just a test flag to disable mail sending if a smpt server isnt available..
-mail_active = 'y'
 
 # End config
 
@@ -83,24 +81,23 @@ def upload_file():
         file = request.files['file']
         email = request.form['email'].strip()
  
-        if file and email and is_valid_email(email): 
+        if file and email and is_valid_email(email):
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(file_path)
             
             # Log the file upload
             logging.info(f"File uploaded: {file.filename} (saved to {file_path})")
-            logging.info(f"Uploaded by: {email}")
+            #logging.info(f"Uploaded by: {email}")
             
             # Send email notification
-            if mail_active == 'y': 
-              msg = Message("New File Uploaded", 
-                          sender=[email],
-                          recipients=["glennkiser@awesomeware.com"])
-              msg.body = f"A new file named {file.filename} has been uploaded."
-              mail.send(msg)
-              logging.info(f"Email sent to {recipients} from {sender}")
+            msg = Message("New File Uploaded", 
+                          sender=email,
+                          recipients=["glennkiser@awesomeware.com"])  # Send notification to the user's email
+            msg.body = f"A new file named {file.filename} has been uploaded."
+            mail.send(msg)
+            logging.info(f"Email sent")
 
-            return 'File uploaded and notification email sent
+            return 'File uploaded and notification email sent'
         else:
             return 'Invalid email address or no file uploaded.', 400
 
@@ -114,7 +111,7 @@ def upload_file():
       <input type="email" name="email" id="email" required><br><br>
       <input type=file name=file required>
       <input type=submit value=Upload>
-    </form>    
+    </form>
     '''
 
 #Main
