@@ -78,7 +78,5 @@
         image: filewatch:latest
         state: started
         network_mode: host
-        ports:
-          - "5000:5000"
-        #volumes:
-        #  - //filewatch/uploads:/opt/filewatch/certs
+        published_ports:
+          - "5443"

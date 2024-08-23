@@ -117,7 +117,7 @@ def upload_file():
 #Main
 if __name__ == "__main__":
     try:
-        app.run(ssl_context=('/usr/src/app/certs/server.crt', '/usr/src/app/certs/server.key'),host="0.0.0.0", port=5000)
+        app.run(ssl_context=('/usr/src/app/certs/server.crt', '/usr/src/app/certs/server.key'),host="0.0.0.0", port=5443)
     except:
         print('An error occurred launching the app')
 

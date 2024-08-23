@@ -13,7 +13,7 @@ RUN mkdir /usr/src/app/certs && \
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 5000
+EXPOSE 5443
 
 CMD ["python", "FileWatch.py","--certfile=/usr/src/app/certs/server.crt","--keyfile=/usr/src/app/certs/server.key"]
 
