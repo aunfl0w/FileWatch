@@ -73,12 +73,17 @@ event_handler = FileHandler()
 observer.schedule(event_handler, path=UPLOAD_FOLDER, recursive=False)
 observer.start()
 
+def is_valid_email(email):
+    email_regex = re.compile(r"[^@]+@[^@]+\.[^@]+")
+    return email_regex.match(email)
+
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']
-        email = request.form['email']
-        if file and email:
+        email = request.form['email'].strip()
+ 
+        if file and email and is_valid_email(email): 
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(file_path)
             
@@ -93,13 +98,14 @@ def upload_file():
                           recipients=["glennkiser@awesomeware.com"])
               msg.body = f"A new file named {file.filename} has been uploaded."
               mail.send(msg)
-              #Output validation in case of delivery issue
               logging.info(f"Email sent to {recipients} from {sender}")
 
-            return 'File uploaded and notification email sent'
+            return 'File uploaded and notification email sent
+        else:
+            return 'Invalid email address or no file uploaded.', 400
+
     return '''
 
-    #Upload page formatting
     <!doctype html>
     <title>Upload File</title>
     <h1>Upload a file</h1>
