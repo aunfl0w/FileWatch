@@ -7,7 +7,11 @@ To execute on Ubuntu in an on the fly Ubuntu VirtualBox VM
 
 1) Clone https://github.com/aunfl0w/FileWatch
 2) Run create_vm_deploy.bash 
-3) upload a file in the browser that opens
+3) Upload a file in the browser that opens
+4) Verify email in other tab
+
+See a video at https://www.youtube.com/watch?v=uA8uWlkjGPQ
+
 
 ## Adapted from
 https://github.com/davidkiser/FileWatch/
