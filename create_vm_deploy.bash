@@ -60,7 +60,7 @@ cat > user-data <<EOF
 #cloud-config
 
 timezone: America/New_York
-locale: es_ES.UTF-8
+locale: en_US.UTF-8
 
 users:
   - name: filewatch
@@ -72,13 +72,9 @@ users:
       - $ssh_pub_key
 
 EOF
-#
-#    sudo: ALL=(ALL) NOPASSWD:ALL
-#    password: $password
-#    chpasswd: { expire: False }
 
 
-## Feed user-data and meta-data to the ISO seed / requieres cloud-image-utils package
+## create cloud-init config iso
 cloud-localds "$seed_iso" user-data meta-data
 
 ## create a virtual machine using vboxmanage
@@ -88,16 +84,18 @@ vmname="filewatch-${ubuntuversion}-1"
 
 vboxmanage createvm --name "$vmname" --register
 
-vboxmanage modifyvm "$vmname" --nested-hw-virt on
+vboxmanage modifyvm "$vmname" --nested-hw-virt on \
+	--cpus 2
+
 vboxmanage modifyvm "$vmname" --recording on \
        	--recording-file filewatch.webm \
 	--recording-max-time=60 \
        	--recording-video-fps=15
+
 vboxmanage modifyvm "$vmname" \
    --memory 1024 --boot1 disk --acpi on \
    --nic1 nat \
    --nat-pf1 "ssh,tcp,,2222,,22" \
-   --nat-pf1 "mailcatcher,tcp,,1080,,1080" \
    --nat-pf1 "app,tcp,,5443,,5443" \
    --mac-address1=0800277CA4F6
 
@@ -115,21 +113,30 @@ vboxmanage modifyvm "$vmname" --boot1 disk --boot2 dvd --boot3 none --boot4 none
 
 ## start up the VM 
 vboxmanage startvm "$vmname" --type headless
+ssh-keygen -f ~/.ssh/known_hosts -R '[localhost]:2222' &>/dev/null
 
-echo waiting for VM to start
+echo Waiting for VM to be ready
 while true
 do
-	name=$(ssh  -o StrictHostKeyChecking=no filewatch@localhost -p 2222 -i ./filewatch "hostname" 2>/dev/null)
+	name=$(ssh  -o StrictHostKeyChecking=no filewatch@localhost -p 2222 -i filewatch "hostname" 2>/dev/null)
 	[[ $name == "filewatch" ]] && break
-	echo trying again...
+	sleep 1
+	echo checking again...
 done	
+sleep 2
 
+#port forward mailcatcher with ssh 
+ssh  -o StrictHostKeyChecking=no filewatch@localhost -p 2222 -i ./filewatch -L 127.0.0.1:1080:127.0.0.1:1080 -N &
+
+popd
 echo Deploying application in $vmname
 echo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
 ansible-playbook -v build_and_run.yaml -i inventory.cloud-init
 
 xdg-open https://127.0.0.1:5443/  2>/dev/null
-xdg-open https://127.0.0.1:5443/ 2>/dev/null 
+xdg-open http://127.0.0.1:1080/ 2>/dev/null 
+
+pushd tmp
 
 
 echo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
@@ -137,7 +144,7 @@ echo login with "ssh  -o StrictHostKeyChecking=no filewatch@localhost -p 2222 -i
 echo xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
 
 while true; do
-    read -p "Do you want to delete the $vmname vm: [y/n] " 
+    read -p "Do you want to delete the $vmname vm: [y/n] " yn
     case $yn in
         [Yy]* ) break;;
         [Nn]* ) popd; exit;;

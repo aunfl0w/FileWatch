@@ -92,7 +92,7 @@ def upload_file():
             # Send email notification
             msg = Message("New File Uploaded", 
                           sender=email,
-                          recipients=["glennkiser@awesomeware.com"])  # Send notification to the user's email
+                          recipients=["uploadadmin@awesomeware.com"])  # Send notification to the user's email
             msg.body = f"A new file named {file.filename} has been uploaded."
             mail.send(msg)
             logging.info(f"Email sent")

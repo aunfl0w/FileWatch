@@ -5,7 +5,7 @@
   tasks:
     - name: Ensure host is vm
       shell:
-        cmd: '[ "$(hostname)" == "sre" ] || exit 3'
+        cmd: '[ "$(hostname)" == "filewatch" ] || exit 3'
         executable: /bin/bash
 
     - name: Ensure apt is updated
@@ -63,7 +63,7 @@
         executable: /usr/bin/gem
 
     - name: Start MailCatcher
-      command: mailcatcher --http-ip=0.0.0.0
+      command: /root/.local/share/gem/ruby/3.2.0/bin/mailcatcher --http-ip=0.0.0.0
       async: 1
       poll: 0
 
