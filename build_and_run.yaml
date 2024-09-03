@@ -1,8 +1,13 @@
 ---
-- hosts: local
+- hosts: 'local'
   become: yes
 
   tasks:
+    - name: Ensure host is vm
+      shell:
+        cmd: '[ "$(hostname)" == "sre" ] || exit 3'
+        executable: /bin/bash
+
     - name: Ensure apt is updated
       apt:
         update_cache: yes
@@ -58,13 +63,13 @@
         executable: /usr/bin/gem
 
     - name: Start MailCatcher
-      command: mailcatcher --http-ip=127.0.0.1
+      command: mailcatcher --http-ip=0.0.0.0
       async: 1
       poll: 0
 
     - name: Clone app
       git:
-        repo: 'https://github.com/davidkiser/FileWatch.git'
+        repo: 'https://github.com/aunfl0w/FileWatch.git'
         dest: /opt/filewatch
     
     # I know theres a docker_image resource to do this,but i fought with a weird issue getting it to find the dockerfile
