@@ -1,14 +1,14 @@
 FileWatch demo example
 
-This project will create a docker container implementing a filewatch service,and then launch it into a local docker instance.
+This project will create a new cloud-init ubuntu Virtual Machine and then inside of it  a docker container implementing a filewatch service. Then it will open a browser to the file upload and mailcatcher web service.  Once done the user can enter y/n to keep or terminate the VM.
 
-To execute (testing in an Ubuntu virtual box VM)
+To execute on Ubuntu in an on the fly Ubuntu VirtualBox VM
+* Requires host machine running ubuntu 2[24].04 with VirtualBox, qemu-utils, whois, cloud-image-utils and wget
 
-1) Grab the build_and_run.yaml and inventory from https://github.com/davidkiser/FileWatch/
-2) Run the ansible playbook  -  sudo ansible-playbook -b build_and_run.yaml 
-3) Access from a local browser
-   UI for filewatch service    https://127.0.0.1:5443/   
-   Mailcatcher UI to check mail delivery   http://127.0.0.1:1080/  
+1) Clone https://github.com/aunfl0w/FileWatch
+2) Run create_vm_deploy.bash 
+3) upload a file in the browser that opens
 
-![Screenshot of app](https://github.com/davidkiser/FileWatch/blob/main/ss/Screenshot%202024-08-22%20125132.png)
-![Screenshot of ansible execution](https://github.com/davidkiser/FileWatch/blob/main/ss/Screenshot%202024-08-22%20151659.png)
+## Adapted from
+https://github.com/davidkiser/FileWatch/
+
